@@ -27,8 +27,9 @@ concurrency:
 jobs:
   # Build job
   build:
-    env:
-      working-directory: src/realtor
+    defaults:
+      run:
+        working-directory: ./src/realtor
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -69,7 +70,6 @@ jobs:
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-
       - name: Install dependencies
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
-        working-directory: ./src/realtor
       - name: Build with Next.js
         run: ${{ steps.detect-package-manager.outputs.runner }} next build
       - name: Static HTML export with Next.js
