@@ -45,6 +45,7 @@ jobs:
           echo "runner=npx --no-install" >> $GITHUB_OUTPUT
       - name: Setup Node
         uses: actions/setup-node@v3
+        working-directory: ./src/realtor
         with:
           node-version: "16"
           cache: ${{ steps.detect-package-manager.outputs.manager }}
