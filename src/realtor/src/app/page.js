@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment } from 'react'
+import { Fragment, useState } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 
@@ -28,6 +28,12 @@ function classNames(...classes) {
 }
 
 export default function Example() {
+
+  const [amount, setAmountValue] = useState(300000);
+  const [amortization, setAmortizationValue] = useState(25);
+  const handleChange = (e) => setAmountValue(e.target.value);
+  const handleAmortizationChange = (e) => setAmortizationValue(e.target.value);
+
   return (
     <>
       {/*
@@ -192,7 +198,58 @@ export default function Example() {
           </div>
         </header>
         <main>
-          <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">{/* Your content */}</div>
+          <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
+
+            <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+              <div>
+                <label htmlFor="amount" className="block text-sm font-medium leading-6 text-gray-900">
+                  amount
+                </label>
+                <div className="relative mt-2 rounded-md shadow-sm">
+                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                    <span className="text-gray-500 sm:text-sm">$</span>
+                  </div>
+                  <input
+                    type="text"
+                    value={amount}
+                    name="amount"
+                    id="amount"
+                    className="block w-full rounded-md border-0 py-1.5 pl-7 pr-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    placeholder="0.00"
+                    aria-describedby="amount-currency"
+                    onChange={handleChange}
+                  />
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                    <span className="text-gray-500 sm:text-sm" id="amount-currency">
+                      CAD
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <label htmlFor="amorization" className="block text-sm font-medium leading-6 text-gray-900">
+                  amorization
+                </label>
+                <div className="relative mt-2 rounded-md shadow-sm">
+                  <input
+                    type="text"
+                    value={amortization}
+                    name="amorization"
+                    id="amorization"
+                    className="block w-full rounded-md border-0 py-1.5 pl-2 pr-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    placeholder="0.00"
+                    aria-describedby="amount-currency"
+                    onChange={handleAmortizationChange}
+                  />
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                    <span className="text-gray-500 sm:text-sm" id="amount-currency">
+                      Years
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </main>
       </div>
     </>
