@@ -3,6 +3,7 @@
 import { Fragment, useState } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { LineChart, Line, CartesianGrid, XAxis, YAxis } from 'recharts';
 
 const user = {
   name: 'Tom Cook',
@@ -33,6 +34,12 @@ export default function Example() {
   const [amortization, setAmortizationValue] = useState(25);
   const handleChange = (e) => setAmountValue(e.target.value);
   const handleAmortizationChange = (e) => setAmortizationValue(e.target.value);
+
+  const data = [
+    { name: 'Page A', uv: 400, pv: 2400, amt: 2400 },
+    { name: 'Page B', uv: 322, pv: 2400, amt: 2400 },
+    { name: 'Page C', uv: 43, pv: 2400, amt: 2400 },
+    { name: 'Page D', uv: 123, pv: 2400, amt: 2400 }];
 
   return (
     <>
@@ -248,6 +255,14 @@ export default function Example() {
                   </div>
                 </div>
               </div>
+            </div>
+            <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+              <LineChart width={600} height={300} data={data}>
+                <Line type="monotone" dataKey="uv" stroke="#8884d8" />
+                <CartesianGrid stroke="#ccc" />
+                <XAxis dataKey="name" />
+                <YAxis />
+              </LineChart>
             </div>
           </div>
         </main>
