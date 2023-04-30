@@ -2,7 +2,7 @@
 
 import { Fragment, useState } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
-import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { Bars3Icon, BellIcon, XMarkIcon, ChevronDownIcon } from '@heroicons/react/24/outline'
 import { LineChart, Line, CartesianGrid, XAxis, YAxis } from 'recharts';
 
 const user = {
@@ -28,12 +28,38 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function Example() {
+export default function Home() {
 
   const [amount, setAmountValue] = useState(300000);
   const [amortization, setAmortizationValue] = useState(25);
-  const handleChange = (e) => setAmountValue(e.target.value);
-  const handleAmortizationChange = (e) => setAmortizationValue(e.target.value);
+  const [term, setTermValue] = useState(5);
+  const [rate, setRateValue] = useState(4);
+  const [total, setTotal] = useState(0);
+
+
+  const handleChange = (e) => {
+    setAmountValue(e.target.value);
+    onConfigChange(Number(e.target.value), Number(amortization));
+  };
+
+  const handleAmortizationChange = (e) => {
+    setAmortizationValue(e.target.value);
+    onConfigChange(Number(amount), Number(e.target.value));
+  }
+
+  const handleTermChange = (e) => {
+    setTermValue(e.target.value);
+    onConfigChange(Number(amount), Number(e.target.value));
+  }
+
+  const handleRateChange = (e) => {
+    setRateValue(e.target.value);
+    onConfigChange(Number(amount), Number(e.target.value));
+  }
+
+  const onConfigChange = (amount, amortization) => {
+    setTotal(amount + amortization);
+  }
 
   const data = [
     { name: 'Page A', uv: 400, pv: 2400, amt: 2400 },
@@ -234,15 +260,15 @@ export default function Example() {
                 </div>
               </div>
               <div>
-                <label htmlFor="amorization" className="block text-sm font-medium leading-6 text-gray-900">
-                  amorization
+                <label htmlFor="amortization" className="block text-sm font-medium leading-6 text-gray-900">
+                  amortization
                 </label>
                 <div className="relative mt-2 rounded-md shadow-sm">
                   <input
                     type="text"
                     value={amortization}
-                    name="amorization"
-                    id="amorization"
+                    name="amortization"
+                    id="amortization"
                     className="block w-full rounded-md border-0 py-1.5 pl-2 pr-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     placeholder="0.00"
                     aria-describedby="amount-currency"
@@ -255,7 +281,70 @@ export default function Example() {
                   </div>
                 </div>
               </div>
+              <div>
+                <label htmlFor="term" className="block text-sm font-medium leading-6 text-gray-900">
+                  term
+                </label>
+                <div className="relative mt-2 rounded-md shadow-sm">
+                  <input
+                    type="text"
+                    value={term}
+                    name="term"
+                    id="term"
+                    className="block w-full rounded-md border-0 py-1.5 pl-2 pr-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    placeholder="0"
+                    onChange={handleTermChange}
+                  />
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                    <span className="text-gray-500 sm:text-sm" id="amount-currency">
+                      Years
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <label htmlFor="amount" className="block text-sm font-medium leading-6 text-gray-900">
+                  Payment type
+                </label>
+                <div className="relative mt-2 rounded-md shadow-sm">
+                  <select
+                    id="country"
+                    name="country"
+                    autoComplete="country-name"
+                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
+                  >
+                    <option value="0">Weekly</option>
+                    <option value="1">Accelerated weekly</option>
+                    <option value="2">Accelerated bi-weekly</option>
+                    <option value="3">Bi-weekly</option>
+                    <option value="4">Semi-monthly</option>
+                    <option value="5" selected="selected">Monthly</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label htmlFor="rate" className="block text-sm font-medium leading-6 text-gray-900">
+                  Interest Rates
+                </label>
+                <div className="relative mt-2 rounded-md shadow-sm">
+                  <input
+                    type="text"
+                    value={rate}
+                    name="rate"
+                    id="rate"
+                    className="block w-full rounded-md border-0 py-1.5 pl-2 pr-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    placeholder="0"
+                    onChange={handleRateChange}
+                  />
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                    <span className="text-gray-500 sm:text-sm" id="amount-currency">
+                      %
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
+            <span>{total}</span>
             <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
               <LineChart width={600} height={300} data={data}>
                 <Line type="monotone" dataKey="uv" stroke="#8884d8" />
