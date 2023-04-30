@@ -39,26 +39,42 @@ export default function Home() {
 
   const handleChange = (e) => {
     setAmountValue(e.target.value);
-    onConfigChange(Number(e.target.value), Number(amortization));
+    createPaymentSchedule(Number(e.target.value), Number(rate), Number(amortization));
   };
 
   const handleAmortizationChange = (e) => {
     setAmortizationValue(e.target.value);
-    onConfigChange(Number(amount), Number(e.target.value));
+    createPaymentSchedule(Number(amount), Number(rate), Number(e.target.value));
   }
 
   const handleTermChange = (e) => {
     setTermValue(e.target.value);
-    onConfigChange(Number(amount), Number(e.target.value));
   }
 
   const handleRateChange = (e) => {
     setRateValue(e.target.value);
-    onConfigChange(Number(amount), Number(e.target.value));
+    createPaymentSchedule(Number(amount), Number(e.target.value), Number(amortization));
   }
 
-  const onConfigChange = (amount, amortization) => {
-    setTotal(amount + amortization);
+  const createPaymentSchedule = (amount, interest, amortization) => {
+    setTotal(calculateMonthlyPayments(amount, interest, amortization));
+  }
+
+
+  const calculateMonthlyPayments = (amount, interest, amortization) => {
+    // forumla M = P [ i(1 + i)^n ] / [ (1 + i)^n – 1]
+    // M = Total monthly payment
+    // P = The total amount of your loan
+    // I = Your interest rate, as a monthly percentage
+    // N = The total amount of months in your timeline for paying off your mortgage
+
+    let yearlyInterest = interest / 100 / 12;
+    let totalMonth = amortization * 12;
+    let firstPart = yearlyInterest * Math.pow((1 + yearlyInterest), totalMonth);
+    let secondPart = Math.pow((1 + yearlyInterest), totalMonth) - 1;
+
+    return amount * (firstPart / secondPart);
+
   }
 
   const data = [
@@ -281,7 +297,7 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-              <div>
+              {/* <div>
                 <label htmlFor="term" className="block text-sm font-medium leading-6 text-gray-900">
                   term
                 </label>
@@ -321,7 +337,7 @@ export default function Home() {
                     <option value="5" selected="selected">Monthly</option>
                   </select>
                 </div>
-              </div>
+              </div> */}
               <div>
                 <label htmlFor="rate" className="block text-sm font-medium leading-6 text-gray-900">
                   Interest Rates
@@ -344,7 +360,7 @@ export default function Home() {
                 </div>
               </div>
             </div>
-            <span>{total}</span>
+            <span>Monthly Payment: {total}</span>
             <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
               <LineChart width={600} height={300} data={data}>
                 <Line type="monotone" dataKey="uv" stroke="#8884d8" />
