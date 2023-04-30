@@ -5,40 +5,49 @@ import { LineChart, Line, CartesianGrid, XAxis, YAxis } from 'recharts';
 
 export default function Home() {
 
-  const [amount, setAmountValue] = useState(300000);
-  const [amortization, setAmortizationValue] = useState(25);
-  const [term, setTermValue] = useState(5);
-  const [rate, setRateValue] = useState(4);
+
+  const [config, setConfig] = useState(
+    {
+      principal: 80000,
+      amortization: 10,
+      rate: 5
+    });
   const [total, setTotal] = useState(0);
   const [paymentSchedule, setPaymentSchedule] = useState([]);
 
-
   const handleChange = (e) => {
-    setAmountValue(e.target.value);
-    createPaymentSchedule(Number(e.target.value), Number(rate), Number(amortization));
+    if (!isNaN(e.target.value)) {
+      setConfig(config => ({
+        ...config,
+        principal: Number(e.target.value)
+      }));
+      createPaymentSchedule(Number(e.target.value), Number(config.rate), Number(config.amortization));
+    }
   };
 
   const handleAmortizationChange = (e) => {
-    setAmortizationValue(e.target.value);
-    createPaymentSchedule(Number(amount), Number(rate), Number(e.target.value));
-  }
-
-  const handleTermChange = (e) => {
-    setTermValue(e.target.value);
+    if (!isNaN(e.target.value)) {
+      setConfig(config => ({
+        ...config,
+        amortization: Number(e.target.value)
+      }));
+      createPaymentSchedule(Number(config.amount), Number(config.rate), Number(e.target.value));
+    }
   }
 
   const handleRateChange = (e) => {
-    setRateValue(e.target.value);
-    createPaymentSchedule(Number(amount), Number(e.target.value), Number(amortization));
+    if (!isNaN(e.target.value)) {
+      setConfig(config => ({
+        ...config,
+        rate: Number(e.target.value)
+      }));
+      createPaymentSchedule(Number(config.amount), Number(e.target.value), Number(config.amortization));
+    }
   }
 
   const createPaymentSchedule = (amount, interest, amortization) => {
     setTotal(calculateMonthlyPayments(amount, interest, amortization));
   }
-
-  const updatePaymentSchedule = (amortization, monthlyPayment) => {
-  }
-
 
   const calculateMonthlyPayments = (amount, interest, amortization) => {
     // forumla M = P [ i(1 + i)^n ] / [ (1 + i)^n – 1]
@@ -81,7 +90,7 @@ export default function Home() {
               </div>
               <input
                 type="text"
-                value={amount}
+                value={config.principal}
                 name="amount"
                 id="amount"
                 className="block w-full rounded-md border-0 py-1.5 pl-7 pr-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -103,7 +112,7 @@ export default function Home() {
             <div className="relative mt-2 rounded-md shadow-sm">
               <input
                 type="text"
-                value={amortization}
+                value={config.amortization}
                 name="amortization"
                 id="amortization"
                 className="block w-full rounded-md border-0 py-1.5 pl-2 pr-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -166,7 +175,7 @@ export default function Home() {
             <div className="relative mt-2 rounded-md shadow-sm">
               <input
                 type="text"
-                value={rate}
+                value={config.rate}
                 name="rate"
                 id="rate"
                 className="block w-full rounded-md border-0 py-1.5 pl-2 pr-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -182,6 +191,8 @@ export default function Home() {
           </div>
         </div>
         <span>Monthly Payment: {total}</span>
+        <br />
+        <span>{JSON.stringify(config)}</span>
         <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
           <LineChart width={600} height={300} data={data}>
             <Line type="monotone" dataKey="uv" stroke="#8884d8" />
