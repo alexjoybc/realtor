@@ -71,6 +71,8 @@ export default function Home() {
     let principalPaid = 0;
     let leftToPay = config.principal;
 
+    console.log(date);
+
     for (let i = 0; i < length; i++) {
 
       let interest = leftToPay * periodInterest;
@@ -80,15 +82,17 @@ export default function Home() {
       
       leftToPay = leftToPay - (monthlyPayment - interest);
       
-      remaining = remaining - monthlyPayment;      
-      
+      remaining = remaining - monthlyPayment;     
+
       map.push({
-        "date": new Date(date.setMonth(date.getMonth() + i)),
+        "date": date,
         "value": monthlyPayment,
         "remaining": Math.round(remaining * 100) / 100,
         "interestPaid": Math.round(interestPaid * 100) / 100,
         "principalPaid": Math.round(principalPaid * 100) / 100
       });
+
+      date.setMonth(date.getMonth() + 1);
 
     }
 
