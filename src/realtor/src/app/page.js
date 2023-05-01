@@ -13,6 +13,7 @@ export default function Home() {
       amortization: 10,
       rate: 5
     });
+  const [rateDisplay, setRateDisplay] = useState("5");
   const [mortgageStat, setMortgageStat] = useState([]);
   const [paymentSchedule, setPaymentSchedule] = useState([]);
 
@@ -35,11 +36,17 @@ export default function Home() {
   }
 
   const handleRateChange = (e) => {
+
+    if(e.target.value.endsWith('.') && !isNaN(e.target.value.split('.').join(""))) {
+      setRateDisplay(e.target.value);
+    } 
+    
     if (!isNaN(e.target.value)) {
       setConfig(config => ({
         ...config,
         rate: Number(e.target.value)
       }));
+      setRateDisplay(e.target.value);
     }
   }
 
@@ -122,7 +129,8 @@ export default function Home() {
                 <span className="text-gray-500 sm:text-sm">$</span>
               </div>
               <input
-                type="text"
+                type="number"
+                step={10000}
                 value={config.principal}
                 name="amount"
                 id="amount"
@@ -144,7 +152,8 @@ export default function Home() {
             </label>
             <div className="relative mt-2 rounded-md shadow-sm">
               <input
-                type="text"
+                type="number"
+                step={5}
                 value={config.amortization}
                 name="amortization"
                 id="amortization"
@@ -207,8 +216,8 @@ export default function Home() {
             </label>
             <div className="relative mt-2 rounded-md shadow-sm">
               <input
-                type="text"
-                value={config.rate}
+                type="number"
+                value={rateDisplay}
                 name="rate"
                 id="rate"
                 className="block w-full rounded-md border-0 py-1.5 pl-2 pr-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
