@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from 'react'
-import { LineChart, Line, Legend, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from 'recharts';
+import { useState, useEffect } from 'react'
+import { LineChart, Line, Legend, CartesianGrid, XAxis, YAxis, ResponsiveContainer, Tooltip } from 'recharts';
+import FinanceCard from '@/components/finance-card';
 
 export default function Home() {
 
@@ -13,6 +14,7 @@ export default function Home() {
       rate: 5
     });
   const [paymentPerPeriod, setPaymentPerPeriod] = useState(0);
+  const [mortgageStat, setMortgageStat] = useState([]);
   const [paymentSchedule, setPaymentSchedule] = useState([]);
 
   const handlePrincipalChange = (e) => {
@@ -21,7 +23,6 @@ export default function Home() {
         ...config,
         principal: Number(e.target.value)
       }));
-      createPaymentSchedule(Number(e.target.value), Number(config.rate), Number(config.amortization));
     }
   };
 
@@ -31,7 +32,6 @@ export default function Home() {
         ...config,
         amortization: Number(e.target.value)
       }));
-      createPaymentSchedule(Number(config.principal), Number(config.rate), Number(e.target.value));
     }
   }
 
@@ -41,33 +41,42 @@ export default function Home() {
         ...config,
         rate: Number(e.target.value)
       }));
-      createPaymentSchedule(Number(config.principal), Number(e.target.value), Number(config.amortization));
     }
   }
 
-  const createPaymentSchedule = (principal, interest, amortization) => {
+  const createPaymentSchedule = (config) => {
 
-    let monthLength = amortization * 12;
-    let periodInterest = interest / 100 / 12;
-    let monthlyPayment = calculateMonthlyPayments(principal, periodInterest, monthLength)
+    
 
+    let monthLength = config.amortization * 12;
+    let periodInterest = config.rate / 100 / 12;
+    let monthlyPayment = calculateMonthlyPayments(config.principal, periodInterest, monthLength)
+    
+    
     setPaymentPerPeriod(monthlyPayment);
-    setPaymentSchedule(generatePaymentSchedule(principal, monthLength, monthlyPayment, periodInterest));
+    
+    setPaymentSchedule(generatePaymentSchedule(config.principal, monthLength, monthlyPayment, periodInterest));
+  
+    
   }
 
   const generatePaymentSchedule = (principal, length, monthlyPayment, periodInterest) => {
 
+    let mortgageStat = [];
+    mortgageStat.push({name: "payments", value: monthlyPayment});
+
     const map = [];
     const date = new Date();
     let remaining = monthlyPayment * length;
-
-
+    let totalInterest = 0;
+    let leftToPay = principal;
 
     for (let i = 0; i < length; i++) {
 
-      let interest = principal * periodInterest;
-      principal = principal - interest;
+      let interest = leftToPay * periodInterest;
+      leftToPay = leftToPay - interest;
       remaining = remaining - monthlyPayment;
+      totalInterest += interest;
 
       map.push({
         "date": new Date(date.setMonth(date.getMonth() + i)),
@@ -77,6 +86,12 @@ export default function Home() {
       });
 
     }
+
+    mortgageStat.push({name: "interests", value: totalInterest});
+    let totalCost = totalInterest + principal;
+    mortgageStat.push({name: "total cost", value: totalCost});
+    setMortgageStat(mortgageStat);
+
 
     return map;
   }
@@ -94,11 +109,9 @@ export default function Home() {
 
   }
 
-  const data = [
-    { name: 'Page A', uv: 400, pv: 2400, amt: 2400 },
-    { name: 'Page B', uv: 322, pv: 2400, amt: 2400 },
-    { name: 'Page C', uv: 43, pv: 2400, amt: 2400 },
-    { name: 'Page D', uv: 123, pv: 2400, amt: 2400 }];
+  useEffect(() => {
+    createPaymentSchedule(config);
+  }, [config]);
 
   return (
     <>
@@ -219,12 +232,15 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <span>Monthly Payment: {paymentPerPeriod}</span>
-        <br />
+        <div className="mt-5 mx-2 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2 md:grid-cols-3">
+          {mortgageStat.map((stat) => (
+            <FinanceCard item={stat} />
+          ))}
+        </div>
         {/* <span>{JSON.stringify(config)}</span> */}
 
         {/* <span>{JSON.stringify(paymentSchedule)}</span> */}
-        <div className="mt-10 mx-2 grid grid-cols-1">
+        <div className="mt-5 mx-2 grid grid-cols-1">
           <ResponsiveContainer width="100%" height={200}>
             <LineChart data={paymentSchedule}>
               <Line yAxisId="right" type="monotone" dataKey="interest" stroke="#8884d8" dot={false} />
@@ -234,6 +250,7 @@ export default function Home() {
               <YAxis yAxisId="left" />
               <YAxis yAxisId="right" orientation="right" />
               <Legend />
+              <Tooltip />
             </LineChart>
           </ResponsiveContainer>
         </div>
