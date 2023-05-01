@@ -237,9 +237,6 @@ export default function Home() {
             <FinanceCard item={stat} />
           ))}
         </div>
-        {/* <span>{JSON.stringify(config)}</span> */}
-
-        {/* <span>{JSON.stringify(paymentSchedule)}</span> */}
         <div className="mt-5 mx-2 grid grid-cols-1">
           <ResponsiveContainer width="100%" height={400}>
             <LineChart data={paymentSchedule}>
