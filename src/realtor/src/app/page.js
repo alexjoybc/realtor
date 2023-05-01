@@ -66,9 +66,9 @@ export default function Home() {
 
     const map = [];
     const date = new Date();
-    let remaining = monthlyPayment * length;
     let interestPaid = 0;
     let principalPaid = 0;
+    let paid = 0;
     let leftToPay = config.principal;
 
     console.log(date);
@@ -82,12 +82,12 @@ export default function Home() {
       
       leftToPay = leftToPay - (monthlyPayment - interest);
       
-      remaining = remaining - monthlyPayment;     
+      paid = paid + monthlyPayment;     
 
       map.push({
         "date": date,
         "value": monthlyPayment,
-        "remaining": Math.round(remaining * 100) / 100,
+        "paid": Math.round(paid * 100) / 100,
         "interestPaid": Math.round(interestPaid * 100) / 100,
         "principalPaid": Math.round(principalPaid * 100) / 100
       });
@@ -250,7 +250,7 @@ export default function Home() {
         <div className="mt-5 mx-2 grid grid-cols-1">
           <ResponsiveContainer width="100%" height={400}>
             <LineChart data={paymentSchedule}>
-              <Line type="monotone" dataKey="remaining" stroke="#2563eb" dot={false} strokeWidth={2} />
+              <Line type="monotone" dataKey="paid" stroke="#2563eb" dot={false} strokeWidth={2} />
               <Line type="monotone" dataKey="principalPaid" stroke="#16a34a" dot={false} strokeWidth={2}/>
               <Line type="monotone" dataKey="interestPaid" stroke="#dc2626" dot={false} strokeWidth={2}/>
               <CartesianGrid stroke="#ccc" strokeDasharray="3 3" vertical={false} />
