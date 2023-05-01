@@ -67,27 +67,33 @@ export default function Home() {
     const map = [];
     const date = new Date();
     let remaining = monthlyPayment * length;
-    let totalInterest = 0;
+    let interestPaid = 0;
+    let principalPaid = 0;
     let leftToPay = config.principal;
 
     for (let i = 0; i < length; i++) {
 
       let interest = leftToPay * periodInterest;
-      leftToPay = leftToPay - interest;
-      remaining = remaining - monthlyPayment;
-      totalInterest += interest;
+      interestPaid += interest;
 
+      principalPaid = principalPaid + (monthlyPayment - interest);
+      
+      leftToPay = leftToPay - (monthlyPayment - interest);
+      
+      remaining = remaining - monthlyPayment;      
+      
       map.push({
         "date": new Date(date.setMonth(date.getMonth() + i)),
         "value": monthlyPayment,
         "remaining": Math.round(remaining * 100) / 100,
-        "interest": Math.round(interest * 100) / 100
+        "interestPaid": Math.round(interestPaid * 100) / 100,
+        "principalPaid": Math.round(principalPaid * 100) / 100
       });
 
     }
 
-    mortgageStat.push({ name: "interests", value: totalInterest });
-    let totalCost = totalInterest + config.principal;
+    mortgageStat.push({ name: "interests", value: interestPaid });
+    let totalCost = interestPaid + config.principal;
     mortgageStat.push({ name: "total cost", value: totalCost });
     setMortgageStat(mortgageStat);
 
@@ -240,12 +246,12 @@ export default function Home() {
         <div className="mt-5 mx-2 grid grid-cols-1">
           <ResponsiveContainer width="100%" height={400}>
             <LineChart data={paymentSchedule}>
-              <Line yAxisId="right" type="monotone" dataKey="interest" stroke="#8884d8" dot={false} />
-              <Line yAxisId="left" type="monotone" dataKey="remaining" stroke="#d1d1d1" dot={false} />
+              <Line type="monotone" dataKey="remaining" stroke="#2563eb" dot={false} strokeWidth={2} />
+              <Line type="monotone" dataKey="principalPaid" stroke="#16a34a" dot={false} strokeWidth={2}/>
+              <Line type="monotone" dataKey="interestPaid" stroke="#dc2626" dot={false} strokeWidth={2}/>
               <CartesianGrid stroke="#ccc" strokeDasharray="3 3" vertical={false} />
               <XAxis dataKey="date" />
-              <YAxis yAxisId="left" />
-              <YAxis yAxisId="right" orientation="right" />
+              <YAxis />
               <Legend />
               <Tooltip />
             </LineChart>
