@@ -110,9 +110,13 @@ export default function Home() {
     // P = The total amount of your loan
     // I = Your interest rate, as a monthly percentage
     // N = The total amount of months in your timeline for paying off your mortgage
-    let firstPart = periodInterest * Math.pow((1 + periodInterest), totalMonth);
-    let secondPart = Math.pow((1 + periodInterest), totalMonth) - 1;
+    
 
+    periodInterest = Math.round(periodInterest * 100000) / 100000;
+    let firstPart = periodInterest * Math.pow((1 + periodInterest), totalMonth);
+    firstPart = Math.round(firstPart * 100000) / 100000;
+    let secondPart = Math.pow((1 + periodInterest), totalMonth) - 1;
+    secondPart = Math.round(secondPart * 100000) / 100000;
     return Math.round(amount * (firstPart / secondPart) * 100) / 100;
 
   }
