@@ -234,7 +234,7 @@ export default function Home() {
         </div>
         <div className="mt-5 mx-2 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2 md:grid-cols-3">
           {mortgageStat.map((stat) => (
-            <FinanceCard item={stat} />
+            <FinanceCard key={stat.name} item={stat} />
           ))}
         </div>
         <div className="mt-5 mx-2 grid grid-cols-1">
