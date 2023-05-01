@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react'
-import { LineChart, Line, CartesianGrid, XAxis, YAxis } from 'recharts';
+import { LineChart, Line, Legend, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from 'recharts';
 
 export default function Home() {
 
@@ -15,7 +15,7 @@ export default function Home() {
   const [paymentPerPeriod, setPaymentPerPeriod] = useState(0);
   const [paymentSchedule, setPaymentSchedule] = useState([]);
 
-  const handleChange = (e) => {
+  const handlePrincipalChange = (e) => {
     if (!isNaN(e.target.value)) {
       setConfig(config => ({
         ...config,
@@ -108,7 +108,7 @@ export default function Home() {
         </div>
       </header>
       <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
-        <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+        <div className="mt-10 mx-2 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-3">
           <div>
             <label htmlFor="amount" className="block text-sm font-medium leading-6 text-gray-900">
               amount
@@ -125,7 +125,7 @@ export default function Home() {
                 className="block w-full rounded-md border-0 py-1.5 pl-7 pr-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 placeholder="0.00"
                 aria-describedby="amount-currency"
-                onChange={handleChange}
+                onChange={handlePrincipalChange}
               />
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
                 <span className="text-gray-500 sm:text-sm" id="amount-currency">
@@ -224,14 +224,18 @@ export default function Home() {
         {/* <span>{JSON.stringify(config)}</span> */}
 
         {/* <span>{JSON.stringify(paymentSchedule)}</span> */}
-        <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-          <LineChart width={600} height={300} data={paymentSchedule}>
-            <Line type="monotone" dataKey="interest" stroke="#8884d8" />
-            <Line type="monotone" dataKey="remaining" stroke="#d1d1d1" />
-            <CartesianGrid stroke="#ccc" />
-            <XAxis dataKey="date" />
-            <YAxis />
-          </LineChart>
+        <div className="mt-10 mx-2 grid grid-cols-1">
+          <ResponsiveContainer width="100%" height={200}>
+            <LineChart data={paymentSchedule}>
+              <Line yAxisId="right" type="monotone" dataKey="interest" stroke="#8884d8" dot={false} />
+              <Line yAxisId="left" type="monotone" dataKey="remaining" stroke="#d1d1d1" dot={false} />
+              <CartesianGrid stroke="#ccc" strokeDasharray="3 3" vertical={false} />
+              <XAxis dataKey="date" />
+              <YAxis yAxisId="left" />
+              <YAxis yAxisId="right" orientation="right" />
+              <Legend />
+            </LineChart>
+          </ResponsiveContainer>
         </div>
       </div>
     </>
