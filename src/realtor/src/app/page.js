@@ -13,7 +13,6 @@ export default function Home() {
       amortization: 10,
       rate: 5
     });
-  const [paymentPerPeriod, setPaymentPerPeriod] = useState(0);
   const [mortgageStat, setMortgageStat] = useState([]);
   const [paymentSchedule, setPaymentSchedule] = useState([]);
 
@@ -46,30 +45,23 @@ export default function Home() {
 
   const createPaymentSchedule = (config) => {
 
-    
-
-    let monthLength = config.amortization * 12;
+    let length = config.amortization * 12;
     let periodInterest = config.rate / 100 / 12;
-    let monthlyPayment = calculateMonthlyPayments(config.principal, periodInterest, monthLength)
-    
-    
-    setPaymentPerPeriod(monthlyPayment);
-    
-    setPaymentSchedule(generatePaymentSchedule(config.principal, monthLength, monthlyPayment, periodInterest));
-  
-    
+    let monthlyPayment = calculateMonthlyPayments(config.principal, periodInterest, length);
+    setPaymentSchedule(generatePaymentSchedule(config, length, periodInterest, monthlyPayment));
+
   }
 
-  const generatePaymentSchedule = (principal, length, monthlyPayment, periodInterest) => {
+  const generatePaymentSchedule = (config, length, periodInterest, monthlyPayment) => {
 
     let mortgageStat = [];
-    mortgageStat.push({name: "payments", value: monthlyPayment});
+    mortgageStat.push({ name: "payments", value: monthlyPayment });
 
     const map = [];
     const date = new Date();
     let remaining = monthlyPayment * length;
     let totalInterest = 0;
-    let leftToPay = principal;
+    let leftToPay = config.principal;
 
     for (let i = 0; i < length; i++) {
 
@@ -87,11 +79,10 @@ export default function Home() {
 
     }
 
-    mortgageStat.push({name: "interests", value: totalInterest});
-    let totalCost = totalInterest + principal;
-    mortgageStat.push({name: "total cost", value: totalCost});
+    mortgageStat.push({ name: "interests", value: totalInterest });
+    let totalCost = totalInterest + config.principal;
+    mortgageStat.push({ name: "total cost", value: totalCost });
     setMortgageStat(mortgageStat);
-
 
     return map;
   }
