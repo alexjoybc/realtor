@@ -108,7 +108,7 @@ export default function Home() {
         </div>
       </header>
       <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
-        <div className="mt-10 mx-2 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-3">
+        <div className="mx-2 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2 md:grid-cols-3">
           <div>
             <label htmlFor="amount" className="block text-sm font-medium leading-6 text-gray-900">
               amount
