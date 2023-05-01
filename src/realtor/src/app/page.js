@@ -12,7 +12,7 @@ export default function Home() {
       amortization: 10,
       rate: 5
     });
-  const [total, setTotal] = useState(0);
+  const [paymentPerPeriod, setPaymentPerPeriod] = useState(0);
   const [paymentSchedule, setPaymentSchedule] = useState([]);
 
   const handleChange = (e) => {
@@ -31,7 +31,7 @@ export default function Home() {
         ...config,
         amortization: Number(e.target.value)
       }));
-      createPaymentSchedule(Number(config.amount), Number(config.rate), Number(e.target.value));
+      createPaymentSchedule(Number(config.principal), Number(config.rate), Number(e.target.value));
     }
   }
 
@@ -41,27 +41,56 @@ export default function Home() {
         ...config,
         rate: Number(e.target.value)
       }));
-      createPaymentSchedule(Number(config.amount), Number(e.target.value), Number(config.amortization));
+      createPaymentSchedule(Number(config.principal), Number(e.target.value), Number(config.amortization));
     }
   }
 
-  const createPaymentSchedule = (amount, interest, amortization) => {
-    setTotal(calculateMonthlyPayments(amount, interest, amortization));
+  const createPaymentSchedule = (principal, interest, amortization) => {
+
+    let monthLength = amortization * 12;
+    let periodInterest = interest / 100 / 12;
+    let monthlyPayment = calculateMonthlyPayments(principal, periodInterest, monthLength)
+
+    setPaymentPerPeriod(monthlyPayment);
+    setPaymentSchedule(generatePaymentSchedule(principal, monthLength, monthlyPayment, periodInterest));
   }
 
-  const calculateMonthlyPayments = (amount, interest, amortization) => {
+  const generatePaymentSchedule = (principal, length, monthlyPayment, periodInterest) => {
+
+    const map = [];
+    const date = new Date();
+    let remaining = monthlyPayment * length;
+
+
+
+    for (let i = 0; i < length; i++) {
+
+      let interest = principal * periodInterest;
+      principal = principal - interest;
+      remaining = remaining - monthlyPayment;
+
+      map.push({
+        "date": new Date(date.setMonth(date.getMonth() + i)),
+        "value": monthlyPayment,
+        "remaining": Math.round(remaining * 100) / 100,
+        "interest": Math.round(interest * 100) / 100
+      });
+
+    }
+
+    return map;
+  }
+
+  const calculateMonthlyPayments = (amount, periodInterest, totalMonth) => {
     // forumla M = P [ i(1 + i)^n ] / [ (1 + i)^n – 1]
     // M = Total monthly payment
     // P = The total amount of your loan
     // I = Your interest rate, as a monthly percentage
     // N = The total amount of months in your timeline for paying off your mortgage
+    let firstPart = periodInterest * Math.pow((1 + periodInterest), totalMonth);
+    let secondPart = Math.pow((1 + periodInterest), totalMonth) - 1;
 
-    let yearlyInterest = interest / 100 / 12;
-    let totalMonth = amortization * 12;
-    let firstPart = yearlyInterest * Math.pow((1 + yearlyInterest), totalMonth);
-    let secondPart = Math.pow((1 + yearlyInterest), totalMonth) - 1;
-
-    return amount * (firstPart / secondPart);
+    return Math.round(amount * (firstPart / secondPart) * 100) / 100;
 
   }
 
@@ -190,14 +219,17 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <span>Monthly Payment: {total}</span>
+        <span>Monthly Payment: {paymentPerPeriod}</span>
         <br />
-        <span>{JSON.stringify(config)}</span>
+        {/* <span>{JSON.stringify(config)}</span> */}
+
+        {/* <span>{JSON.stringify(paymentSchedule)}</span> */}
         <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-          <LineChart width={600} height={300} data={data}>
-            <Line type="monotone" dataKey="uv" stroke="#8884d8" />
+          <LineChart width={600} height={300} data={paymentSchedule}>
+            <Line type="monotone" dataKey="interest" stroke="#8884d8" />
+            <Line type="monotone" dataKey="remaining" stroke="#d1d1d1" />
             <CartesianGrid stroke="#ccc" />
-            <XAxis dataKey="name" />
+            <XAxis dataKey="date" />
             <YAxis />
           </LineChart>
         </div>
