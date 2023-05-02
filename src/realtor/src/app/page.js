@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { LineChart, Line, Legend, CartesianGrid, XAxis, YAxis, ResponsiveContainer, Tooltip } from 'recharts';
 import FinanceCard from '@/components/finance-card';
+import NumberInput from '@/components/number-input';
 
 export default function Home() {
 
@@ -37,10 +38,10 @@ export default function Home() {
 
   const handleRateChange = (e) => {
 
-    if(e.target.value.endsWith('.') && !isNaN(e.target.value.split('.').join(""))) {
+    if (e.target.value.endsWith('.') && !isNaN(e.target.value.split('.').join(""))) {
       setRateDisplay(e.target.value);
-    } 
-    
+    }
+
     if (!isNaN(e.target.value)) {
       setConfig(config => ({
         ...config,
@@ -79,10 +80,10 @@ export default function Home() {
       interestPaid += interest;
 
       principalPaid = principalPaid + (monthlyPayment - interest);
-      
+
       leftToPay = leftToPay - (monthlyPayment - interest);
-      
-      paid = paid + monthlyPayment;     
+
+      paid = paid + monthlyPayment;
 
       map.push({
         "date": date,
@@ -110,7 +111,7 @@ export default function Home() {
     // P = The total amount of your loan
     // I = Your interest rate, as a monthly percentage
     // N = The total amount of months in your timeline for paying off your mortgage
-    
+
     let firstPart = periodInterest * Math.pow((1 + periodInterest), totalMonth);
     let secondPart = Math.pow((1 + periodInterest), totalMonth) - 1;
     return Math.round(amount * (firstPart / secondPart) * 100) / 100;
@@ -130,55 +131,32 @@ export default function Home() {
       </header>
       <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
         <div className="mx-2 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2 md:grid-cols-3">
-          <div>
-            <label htmlFor="amount" className="block text-sm font-medium leading-6 text-gray-900">
-              amount
-            </label>
-            <div className="relative mt-2 rounded-md shadow-sm">
-              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                <span className="text-gray-500 sm:text-sm">$</span>
-              </div>
-              <input
-                type="number"
-                step={10000}
-                value={config.principal}
-                name="amount"
-                id="amount"
-                className="block w-full rounded-md border-0 py-1.5 pl-7 pr-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                placeholder="0.00"
-                aria-describedby="amount-currency"
-                onChange={handlePrincipalChange}
-              />
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                <span className="text-gray-500 sm:text-sm" id="amount-currency">
-                  CAD
-                </span>
-              </div>
-            </div>
-          </div>
-          <div>
-            <label htmlFor="amortization" className="block text-sm font-medium leading-6 text-gray-900">
-              amortization
-            </label>
-            <div className="relative mt-2 rounded-md shadow-sm">
-              <input
-                type="number"
-                step={5}
-                value={config.amortization}
-                name="amortization"
-                id="amortization"
-                className="block w-full rounded-md border-0 py-1.5 pl-2 pr-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                placeholder="0.00"
-                aria-describedby="amount-currency"
-                onChange={handleAmortizationChange}
-              />
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                <span className="text-gray-500 sm:text-sm" id="amount-currency">
-                  Years
-                </span>
-              </div>
-            </div>
-          </div>
+
+          <NumberInput
+            name={"amount"}
+            label={"amount"}
+            step={1000}
+            value={config.principal}
+            leftLabel={"$"}
+            rightLabel={"CAD"}
+            onValueChange={handlePrincipalChange}
+          />
+
+          <NumberInput
+            name={"amortization"}
+            label={"amortization"}
+            step={5}
+            value={config.amortization}
+            rightLabel={"Years"}
+            onValueChange={handleAmortizationChange} />
+
+          <NumberInput
+            name={"rate"}
+            label={"rate"}
+            step={0.1}
+            value={config.rate}
+            rightLabel={"%"}
+            onValueChange={handleRateChange} />
           {/* <div>
                 <label htmlFor="term" className="block text-sm font-medium leading-6 text-gray-900">
                   term
@@ -220,27 +198,6 @@ export default function Home() {
                   </select>
                 </div>
               </div> */}
-          <div>
-            <label htmlFor="rate" className="block text-sm font-medium leading-6 text-gray-900">
-              Interest Rates
-            </label>
-            <div className="relative mt-2 rounded-md shadow-sm">
-              <input
-                type="number"
-                value={rateDisplay}
-                name="rate"
-                id="rate"
-                className="block w-full rounded-md border-0 py-1.5 pl-2 pr-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                placeholder="0"
-                onChange={handleRateChange}
-              />
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                <span className="text-gray-500 sm:text-sm" id="amount-currency">
-                  %
-                </span>
-              </div>
-            </div>
-          </div>
         </div>
         <div className="mt-5 mx-2 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2 md:grid-cols-3">
           {mortgageStat.map((stat) => (
@@ -251,8 +208,8 @@ export default function Home() {
           <ResponsiveContainer width="100%" height={400}>
             <LineChart data={paymentSchedule}>
               <Line type="monotone" dataKey="paid" stroke="#2563eb" dot={false} strokeWidth={2} />
-              <Line type="monotone" dataKey="principalPaid" stroke="#16a34a" dot={false} strokeWidth={2}/>
-              <Line type="monotone" dataKey="interestPaid" stroke="#dc2626" dot={false} strokeWidth={2}/>
+              <Line type="monotone" dataKey="principalPaid" stroke="#16a34a" dot={false} strokeWidth={2} />
+              <Line type="monotone" dataKey="interestPaid" stroke="#dc2626" dot={false} strokeWidth={2} />
               <CartesianGrid stroke="#ccc" strokeDasharray="3 3" vertical={false} />
               <XAxis dataKey="date" />
               <YAxis />
