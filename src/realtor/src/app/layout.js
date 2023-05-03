@@ -7,7 +7,8 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
   title: 'Morgage Plan',
-  description: 'Plan your mortgage with AI',
+  description: 'Plan your mortgage with AI, Calculate how much you can afford',
+  keywords: ['Morgage', 'Loan', 'Property', 'House', 'Calculator', 'Bank', 'Money', 'Affordable'],
 }
 
 export default function RootLayout({ children }) {
