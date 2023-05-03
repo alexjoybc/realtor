@@ -1,4 +1,5 @@
 import './globals.css'
+import Script from 'next/script'
 import { Inter } from 'next/font/google'
 import Header from './header'
 
@@ -18,6 +19,19 @@ export default function RootLayout({ children }) {
           <main>{children}</main>
         </div>
       </body>
+      <Script
+        src="https://www.googletagmanager.com/gtag/js?id=G-D6N6KJDJ73" strategy="afterInteractive" 
+      />
+
+      <Script id="google-analytics" strategy="afterInteractive">
+        {` 
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){window.dataLayer.push(arguments);}      
+          gtag('js', new Date());
+
+          gtag('config', 'G-D6N6KJDJ73');
+        `}
+      </Script>
     </html>
   )
 }
