@@ -4,17 +4,22 @@ import { useState, useEffect } from 'react'
 import { LineChart, Line, Legend, CartesianGrid, XAxis, YAxis, ResponsiveContainer, Tooltip } from 'recharts';
 import FinanceCard from '@/components/finance-card';
 import NumberInput from '@/components/number-input';
+import Dropdown from '@/components/dropdown';
 
 export default function Home() {
 
+  const paymentOptions = [
+    {value: 0, label: "Monthly"}
+  ]
 
   const [config, setConfig] = useState(
     {
       principal: 80000,
       amortization: 10,
-      rate: 5
+      rate: 5,
+      paymentType: 0
     });
-  const [rateDisplay, setRateDisplay] = useState("5");
+
   const [mortgageStat, setMortgageStat] = useState([]);
   const [paymentSchedule, setPaymentSchedule] = useState([]);
 
@@ -49,6 +54,13 @@ export default function Home() {
       }));
       setRateDisplay(e.target.value);
     }
+  }
+
+  const handlePaymentOptionChange = (e) => {
+    setConfig(config => ({
+      ...config,
+      paymentType: Number(e.target.value)
+    }))
   }
 
   const createPaymentSchedule = (config) => {
@@ -130,7 +142,7 @@ export default function Home() {
         </div>
       </header>
       <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
-        <div className="mx-2 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2 md:grid-cols-3">
+        <div className="mx-2 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2 md:grid-cols-4">
 
           <NumberInput
             name={"amount"}
@@ -157,47 +169,13 @@ export default function Home() {
             value={config.rate}
             rightLabel={"%"}
             onValueChange={handleRateChange} />
-          {/* <div>
-                <label htmlFor="term" className="block text-sm font-medium leading-6 text-gray-900">
-                  term
-                </label>
-                <div className="relative mt-2 rounded-md shadow-sm">
-                  <input
-                    type="text"
-                    value={term}
-                    name="term"
-                    id="term"
-                    className="block w-full rounded-md border-0 py-1.5 pl-2 pr-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    placeholder="0"
-                    onChange={handleTermChange}
-                  />
-                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                    <span className="text-gray-500 sm:text-sm" id="amount-currency">
-                      Years
-                    </span>
-                  </div>
-                </div>
-              </div>
-              <div>
-                <label htmlFor="amount" className="block text-sm font-medium leading-6 text-gray-900">
-                  Payment type
-                </label>
-                <div className="relative mt-2 rounded-md shadow-sm">
-                  <select
-                    id="country"
-                    name="country"
-                    autoComplete="country-name"
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
-                  >
-                    <option value="0">Weekly</option>
-                    <option value="1">Accelerated weekly</option>
-                    <option value="2">Accelerated bi-weekly</option>
-                    <option value="3">Bi-weekly</option>
-                    <option value="4">Semi-monthly</option>
-                    <option value="5" selected="selected">Monthly</option>
-                  </select>
-                </div>
-              </div> */}
+
+          <Dropdown 
+            name={"paymentType"} 
+            label={"Payment Type"} 
+            options={paymentOptions} 
+            onChange={handlePaymentOptionChange} />
+
         </div>
         <div className="mt-5 mx-2 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2 md:grid-cols-3">
           {mortgageStat.map((stat) => (
