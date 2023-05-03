@@ -9,7 +9,7 @@ import Dropdown from '@/components/dropdown';
 export default function Home() {
 
   const paymentOptions = [
-    {value: 0, label: "Monthly"}
+    { value: 0, label: "Monthly" }
   ]
 
   const [config, setConfig] = useState(
@@ -43,16 +43,11 @@ export default function Home() {
 
   const handleRateChange = (e) => {
 
-    if (e.target.value.endsWith('.') && !isNaN(e.target.value.split('.').join(""))) {
-      setRateDisplay(e.target.value);
-    }
-
     if (!isNaN(e.target.value)) {
       setConfig(config => ({
         ...config,
         rate: Number(e.target.value)
       }));
-      setRateDisplay(e.target.value);
     }
   }
 
@@ -170,10 +165,10 @@ export default function Home() {
             rightLabel={"%"}
             onValueChange={handleRateChange} />
 
-          <Dropdown 
-            name={"paymentType"} 
-            label={"Payment Type"} 
-            options={paymentOptions} 
+          <Dropdown
+            name={"paymentType"}
+            label={"Payment Type"}
+            options={paymentOptions}
             onChange={handlePaymentOptionChange} />
 
         </div>
